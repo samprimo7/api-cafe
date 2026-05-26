@@ -1,7 +1,9 @@
 <header>
   <h1>☕ Coffee API</h1>
 
-  <button *ngIf="!user" (click)="login()">Iniciar sesion con GitHub</button>
+  <button *ngIf="!user" (click)="login()" title="Iniciar sesion con GitHub">
+    <i class="fa-brands fa-github"></i> Login
+  </button>
 
   <div *ngIf="user" class="user-info">
     <img [src]="user.avatarUrl" [alt]="user.login">
@@ -9,7 +11,9 @@
     <span class="badge" [class.admin]="user.isAdmin">
       {{ user.isAdmin ? 'ADMIN' : 'USER' }}
     </span>
-    <button class="secondary" (click)="logout()">Salir</button>
+    <button class="secondary" (click)="logout()" title="Cerrar sesion">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
   </div>
 </header>
 
@@ -18,25 +22,34 @@
   <!-- Buscador -->
   <div class="form-row">
     <input type="text" [(ngModel)]="searchCountry" placeholder="Buscar por pais (ej: eth)" (keyup.enter)="doSearch()">
-    <button (click)="doSearch()">Buscar</button>
+    <button (click)="doSearch()" title="Buscar">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
   </div>
 
   <!-- Formulario de creacion/edicion: solo admin -->
-  <div *ngIf="user?.isAdmin" style="background:white;padding:1rem;border-radius:4px;margin-bottom:1rem;">
-    <h3 style="margin-top:0;">
+  <div *ngIf="user?.isAdmin" class="form-card">
+    <h3 class="form-title">
       {{ editingCoffee ? 'Editar cafe #' + editingCoffee.id : 'Anadir nuevo cafe' }}
     </h3>
-    <div class="form-row">
+    <div class="form-grid">
       <input type="text" [(ngModel)]="formCoffee.country" placeholder="Pais">
       <input type="text" [(ngModel)]="formCoffee.variety" placeholder="Variedad">
       <input type="text" [(ngModel)]="formCoffee.processingMethod" placeholder="Procesado (ej: Washed / Wet)">
       <input type="number" [(ngModel)]="formCoffee.score" placeholder="Score (0-100)">
-      <button (click)="saveCoffee()">{{ editingCoffee ? 'Guardar' : 'Crear' }}</button>
-      <button *ngIf="editingCoffee" class="secondary" (click)="cancelEdit()">Cancelar</button>
+    </div>
+    <div class="form-actions">
+      <button *ngIf="editingCoffee" class="secondary" (click)="cancelEdit()" title="Cancelar">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <button (click)="saveCoffee()" [title]="editingCoffee ? 'Guardar cambios' : 'Crear cafe'">
+        <i class="fa-solid" [class.fa-check]="editingCoffee" [class.fa-plus]="!editingCoffee"></i>
+      </button>
     </div>
   </div>
 
-  <!-- Tabla de cafes -->
+  <!-- Tabla de cafes (envuelta para scroll horizontal en movil) -->
+  <div class="table-wrapper">
   <table>
     <thead>
       <tr>
@@ -57,8 +70,12 @@
         <td>{{ c.score }}</td>
         <td *ngIf="user?.isAdmin">
           <div class="actions">
-            <button (click)="startEdit(c)">Editar</button>
-            <button class="danger" (click)="deleteCoffee(c)">Borrar</button>
+            <button (click)="startEdit(c)" title="Editar">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button class="danger" (click)="deleteCoffee(c)" title="Borrar">
+              <i class="fa-solid fa-trash"></i>
+            </button>
           </div>
         </td>
       </tr>
@@ -69,10 +86,13 @@
       </tr>
     </tbody>
   </table>
+  </div>
 
   <!-- Controles de paginacion -->
   <div *ngIf="totalPages > 1" style="display:flex;justify-content:center;gap:0.3rem;margin-top:1rem;align-items:center;">
-    <button class="secondary" (click)="prevPage()" [disabled]="currentPage === 0">&laquo; Anterior</button>
+    <button class="secondary" (click)="prevPage()" [disabled]="currentPage === 0" title="Pagina anterior">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
 
     <button *ngFor="let p of pageNumbers()"
             [class.secondary]="p !== currentPage"
@@ -80,7 +100,9 @@
       {{ p + 1 }}
     </button>
 
-    <button class="secondary" (click)="nextPage()" [disabled]="currentPage === totalPages - 1">Siguiente &raquo;</button>
+    <button class="secondary" (click)="nextPage()" [disabled]="currentPage === totalPages - 1" title="Pagina siguiente">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
   </div>
 
   <!-- Resumen -->
@@ -88,4 +110,9 @@
     Mostrando pagina {{ currentPage + 1 }} de {{ totalPages }} ({{ totalElements }} cafes en total)
   </p>
 
+</div>
+
+<!-- Toast: notificacion flotante temporal -->
+<div *ngIf="toast" class="toast" [class.error]="toast.type === 'error'">
+  {{ toast.message }}
 </div>

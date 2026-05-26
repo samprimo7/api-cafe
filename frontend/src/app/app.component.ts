@@ -61,6 +61,9 @@ export class AppComponent implements OnInit {
   editingCoffee: Coffee | null = null;
   formCoffee: Partial<Coffee> = this.emptyForm();
 
+  // Toast (notificacion flotante temporal)
+  toast: { message: string; type: 'success' | 'error' } | null = null;
+
   ngOnInit(): void {
     this.loadUser();
     this.loadCoffees();
@@ -140,7 +143,7 @@ export class AppComponent implements OnInit {
 
   saveCoffee(): void {
     if (!this.formCoffee.country) {
-      alert('El pais es obligatorio');
+      this.showToast('El pais es obligatorio', 'error');
       return;
     }
 
@@ -148,19 +151,21 @@ export class AppComponent implements OnInit {
       // Modo edicion: PUT
       this.http.put<Coffee>(`/coffees/${this.editingCoffee.id}`, this.formCoffee, { withCredentials: true }).subscribe({
         next: () => {
+          this.showToast('Cafe actualizado correctamente');
           this.cancelEdit();
           this.loadCoffees();
         },
-        error: (e) => alert('Error al actualizar: ' + (e.error?.message || e.status))
+        error: (e) => this.showToast('Error al actualizar: ' + (e.error?.message || e.status), 'error')
       });
     } else {
       // Modo creacion: POST
       this.http.post<Coffee>('/coffees', this.formCoffee, { withCredentials: true }).subscribe({
         next: () => {
+          this.showToast('Cafe creado correctamente');
           this.formCoffee = this.emptyForm();
           this.loadCoffees();
         },
-        error: (e) => alert('Error al crear: ' + (e.error?.message || e.status))
+        error: (e) => this.showToast('Error al crear: ' + (e.error?.message || e.status), 'error')
       });
     }
   }
@@ -169,9 +174,21 @@ export class AppComponent implements OnInit {
     if (!confirm(`Borrar el cafe de ${coffee.country} (${coffee.variety || 'sin variedad'})?`)) return;
 
     this.http.delete(`/coffees/${coffee.id}`, { withCredentials: true }).subscribe({
-      next: () => this.loadCoffees(),
-      error: (e) => alert('Error al borrar: ' + (e.error?.message || e.status))
+      next: () => {
+        this.showToast('Cafe borrado correctamente');
+        this.loadCoffees();
+      },
+      error: (e) => this.showToast('Error al borrar: ' + (e.error?.message || e.status), 'error')
     });
+  }
+
+  /**
+   * Muestra una notificacion flotante temporal.
+   * Se cierra sola a los 3 segundos.
+   */
+  showToast(message: string, type: 'success' | 'error' = 'success'): void {
+    this.toast = { message, type };
+    setTimeout(() => this.toast = null, 3000);
   }
 
   // --- Helpers ---

@@ -1,0 +1,28 @@
+# Build de Maven
+target/
+*.jar
+*.war
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+bin/
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# Variables de entorno con secretos (GitHub OAuth, etc.)
+.env
+.env.local
+
+# Frontend Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/

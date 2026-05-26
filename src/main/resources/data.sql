@@ -1,0 +1,93 @@
+-- Datos de ejemplo sacados del dataset Coffee Quality Institute
+-- https://github.com/jldbc/coffee-quality-database
+-- Se ejecuta automaticamente al arrancar la aplicacion.
+
+INSERT INTO coffees (
+    species, owner, country, farm_name, lot_number, mill, ico_number, company,
+    altitude, region, producer, number_of_bags, bag_weight, in_country_partner,
+    harvest_year, grading_date, variety, processing_method,
+    aroma, flavor, aftertaste, acidity, body, balance, uniformity, clean_cup,
+    sweetness, cupper_points, total_cup_points,
+    moisture, category_one_defects, quakers, color, category_two_defects, expiration,
+    certification_body, certification_address, certification_contact,
+    unit_of_measurement, altitude_low_meters, altitude_high_meters, altitude_mean_meters
+) VALUES
+('Arabica', 'metad plc', 'Ethiopia', 'metad plc', NULL, 'metad plc', '2014/2015',
+ 'metad agricultural developmet plc', '1950-2200', 'guji-hambela', 'METAD PLC', 300, '60 kg',
+ 'METAD Agricultural Development plc', '2014', 'April 4th, 2015', 'Heirloom', 'Washed / Wet',
+ 8.67, 8.83, 8.67, 8.75, 8.50, 8.42, 10.00, 10.00, 10.00, 8.75, 90.58,
+ 0.12, 0, 0, 'Green', 0, 'April 3rd, 2016',
+ 'METAD Agricultural Development plc', '309fcf77415a3661ae83e027f7e5f05dad786e44', '19fef5a731de2db57d16da10287413f5f99bc2dd',
+ 'm', 1950.0, 2200.0, 2075.0),
+
+('Arabica', 'metad plc', 'Ethiopia', 'metad plc', NULL, 'metad plc', '2014/2015',
+ 'metad agricultural developmet plc', '1950-2200', 'guji-hambela', 'METAD PLC', 300, '60 kg',
+ 'METAD Agricultural Development plc', '2014', 'April 4th, 2015', 'Yirgacheffe', 'Washed / Wet',
+ 8.75, 8.67, 8.50, 8.58, 8.42, 8.42, 10.00, 10.00, 10.00, 8.58, 89.92,
+ 0.12, 0, 0, 'Green', 1, 'April 3rd, 2016',
+ 'METAD Agricultural Development plc', '309fcf77415a3661ae83e027f7e5f05dad786e44', '19fef5a731de2db57d16da10287413f5f99bc2dd',
+ 'm', 1950.0, 2200.0, 2075.0),
+
+('Arabica', 'juan luis alvarado romero', 'Guatemala', 'finca el injerto', '017-053-0211', 'finca el injerto',
+ '13-111-053', 'unex guatemala, s.a.', '1600-1800', 'huehuetenango', 'Finca El Injerto', 1, '30 kg',
+ 'Asociacion Nacional Del Cafe', '2013', 'May 31st, 2013', 'Bourbon', 'Washed / Wet',
+ 8.33, 8.42, 8.42, 8.25, 8.25, 8.25, 10.00, 10.00, 10.00, 8.33, 88.25,
+ 0.11, 0, 0, 'Green', 3, 'May 30th, 2014',
+ 'Asociacion Nacional Del Cafe', 'b0a365f8dde36a49a4ffcea1a0a759e9d7b27e76', '1f3a4042d67f6534e4aff3026afb6e76d6a9ba5d',
+ 'm', 1600.0, 1800.0, 1700.0),
+
+('Arabica', 'grounds for health admin', 'Colombia', 'la esperanza', '003', 'la esperanza',
+ '14-3242', 'cafe cerca colombia', '1700-1930', 'narino', 'Various', 5, '70 kg',
+ 'Almacafe', '2014', 'November 6th, 2014', 'Caturra', 'Washed / Wet',
+ 8.25, 8.25, 8.17, 8.33, 8.17, 8.17, 10.00, 10.00, 10.00, 8.42, 87.75,
+ 0.10, 0, 0, 'Green', 5, 'November 5th, 2015',
+ 'Almacafe', 'c7b1df6918f0e68fc6ed50dc118bd6d7c3bd1c40', 'c7b1df6918f0e68fc6ed50dc118bd6d7c3bd1c40',
+ 'm', 1700.0, 1930.0, 1815.0),
+
+('Arabica', 'yidnekachew dabessa', 'Colombia', 'hacienda la esmeralda', '12', 'hacienda la esmeralda',
+ '15-098', 'hacienda la esmeralda s.a.', '1500-1700', 'boquete', 'Various', 2, '30 kg',
+ 'Specialty Coffee Association of Panama', '2015', 'April 15th, 2015', 'Typica', 'Washed / Wet',
+ 8.08, 8.17, 8.00, 8.17, 8.17, 8.08, 10.00, 10.00, 10.00, 8.17, 87.00,
+ 0.11, 0, 0, 'Green', 2, 'April 14th, 2016',
+ 'Specialty Coffee Association of Panama', 'hacienda la esmeralda', 'hacienda la esmeralda',
+ 'm', 1500.0, 1700.0, 1600.0),
+
+('Arabica', 'dominion trading company', 'Brazil', 'fazenda santa ines', 'santa ines 001', 'fazenda santa ines',
+ '12-111-088', 'dominion trading company', '1200-1400', 'sul de minas', 'Fazenda Santa Ines', 50, '60 kg',
+ 'Brazil Specialty Coffee Association', '2012', 'March 14th, 2013', 'Mundo Novo', 'Natural / Dry',
+ 7.92, 8.00, 7.83, 7.92, 7.92, 7.83, 10.00, 10.00, 10.00, 7.92, 85.33,
+ 0.11, 0, 1, 'Green', 6, 'March 13th, 2014',
+ 'Brazil Specialty Coffee Association', 'rua conselheiro lafaiete', 'contato@bsca.com.br',
+ 'm', 1200.0, 1400.0, 1300.0),
+
+('Arabica', 'bourbon specialty coffees', 'Brazil', 'fazenda do lobo', 'lobo-2015-02', 'fazenda do lobo',
+ '13-222-009', 'bourbon specialty coffees', '1100-1300', 'cerrado mineiro', 'Fazenda do Lobo', 20, '60 kg',
+ 'Brazil Specialty Coffee Association', '2015', 'June 20th, 2015', 'Catuai', 'Pulped Natural',
+ 7.83, 7.92, 7.75, 7.83, 7.92, 7.75, 10.00, 10.00, 10.00, 7.83, 84.83,
+ 0.12, 0, 2, 'Green', 4, 'June 19th, 2016',
+ 'Brazil Specialty Coffee Association', 'rua conselheiro lafaiete', 'contato@bsca.com.br',
+ 'm', 1100.0, 1300.0, 1200.0),
+
+('Arabica', 'kenya coffee traders', 'Kenya', 'kiamabara factory', 'ab-001', 'kiamabara factory',
+ '13-111-032', 'kenya coffee traders ltd', '1700-1900', 'nyeri', 'Various Smallholders', 10, '60 kg',
+ 'Africa Fine Coffee Association', '2013', 'July 10th, 2013', 'SL28', 'Washed / Wet',
+ 8.42, 8.50, 8.33, 8.67, 8.25, 8.33, 10.00, 10.00, 10.00, 8.50, 89.00,
+ 0.11, 0, 0, 'Bluish-Green', 1, 'July 9th, 2014',
+ 'Africa Fine Coffee Association', 'plot 12 kanjokya street', 'info@africafinecoffees.org',
+ 'm', 1700.0, 1900.0, 1800.0),
+
+('Arabica', 'kenya coffee traders', 'Kenya', 'gatomboya factory', 'gt-002', 'gatomboya factory',
+ '13-111-033', 'kenya coffee traders ltd', '1650-1800', 'nyeri', 'Various Smallholders', 8, '60 kg',
+ 'Africa Fine Coffee Association', '2013', 'July 10th, 2013', 'SL34', 'Washed / Wet',
+ 8.25, 8.33, 8.17, 8.42, 8.17, 8.17, 10.00, 10.00, 10.00, 8.33, 87.83,
+ 0.10, 0, 0, 'Bluish-Green', 2, 'July 9th, 2014',
+ 'Africa Fine Coffee Association', 'plot 12 kanjokya street', 'info@africafinecoffees.org',
+ 'm', 1650.0, 1800.0, 1725.0),
+
+('Arabica', 'exclusive coffees s.a.', 'Costa Rica', 'helsar de zarcero', 'hz-2014-005', 'helsar de zarcero',
+ '13-111-041', 'exclusive coffees s.a.', '1600-1800', 'west valley', 'Ricardo Perez', 4, '69 kg',
+ 'Instituto del Cafe de Costa Rica', '2014', 'March 20th, 2014', 'Villa Sarchi', 'Honey',
+ 8.17, 8.25, 8.17, 8.25, 8.08, 8.17, 10.00, 10.00, 10.00, 8.25, 86.83,
+ 0.11, 0, 0, 'Green', 3, 'March 19th, 2015',
+ 'Instituto del Cafe de Costa Rica', 'barrio gonzalez lahmann', 'icafe@icafe.cr',
+ 'm', 1600.0, 1800.0, 1700.0);

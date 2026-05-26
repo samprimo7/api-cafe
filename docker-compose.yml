@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: coffee-postgres
+    environment:
+      POSTGRES_DB: coffeedb
+      POSTGRES_USER: coffee
+      POSTGRES_PASSWORD: coffee
+    ports:
+      - "5432:5432"
+    volumes:
+      - coffee_pg_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: coffee-app
+    depends_on:
+      - postgres
+    environment:
+      # Dentro de la red de docker-compose, el host de la BD es el nombre del servicio: "postgres"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/coffeedb
+      SPRING_DATASOURCE_USERNAME: coffee
+      SPRING_DATASOURCE_PASSWORD: coffee
+      # Credenciales de GitHub OAuth (definir en archivo .env, no hardcodear)
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+    ports:
+      - "8080:8080"
+
+volumes:
+  coffee_pg_data:

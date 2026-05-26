@@ -1,0 +1,91 @@
+<header>
+  <h1>☕ Coffee API</h1>
+
+  <button *ngIf="!user" (click)="login()">Iniciar sesion con GitHub</button>
+
+  <div *ngIf="user" class="user-info">
+    <img [src]="user.avatarUrl" [alt]="user.login">
+    <span>{{ user.name || user.login }}</span>
+    <span class="badge" [class.admin]="user.isAdmin">
+      {{ user.isAdmin ? 'ADMIN' : 'USER' }}
+    </span>
+    <button class="secondary" (click)="logout()">Salir</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Buscador -->
+  <div class="form-row">
+    <input type="text" [(ngModel)]="searchCountry" placeholder="Buscar por pais (ej: eth)" (keyup.enter)="doSearch()">
+    <button (click)="doSearch()">Buscar</button>
+  </div>
+
+  <!-- Formulario de creacion/edicion: solo admin -->
+  <div *ngIf="user?.isAdmin" style="background:white;padding:1rem;border-radius:4px;margin-bottom:1rem;">
+    <h3 style="margin-top:0;">
+      {{ editingCoffee ? 'Editar cafe #' + editingCoffee.id : 'Anadir nuevo cafe' }}
+    </h3>
+    <div class="form-row">
+      <input type="text" [(ngModel)]="formCoffee.country" placeholder="Pais">
+      <input type="text" [(ngModel)]="formCoffee.variety" placeholder="Variedad">
+      <input type="text" [(ngModel)]="formCoffee.processingMethod" placeholder="Procesado (ej: Washed / Wet)">
+      <input type="number" [(ngModel)]="formCoffee.score" placeholder="Score (0-100)">
+      <button (click)="saveCoffee()">{{ editingCoffee ? 'Guardar' : 'Crear' }}</button>
+      <button *ngIf="editingCoffee" class="secondary" (click)="cancelEdit()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Tabla de cafes -->
+  <table>
+    <thead>
+      <tr>
+        <th>Pais</th>
+        <th>Region</th>
+        <th>Variedad</th>
+        <th>Procesado</th>
+        <th>Score</th>
+        <th *ngIf="user?.isAdmin">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of coffees">
+        <td>{{ c.country }}</td>
+        <td>{{ c.region }}</td>
+        <td>{{ c.variety }}</td>
+        <td>{{ c.processingMethod }}</td>
+        <td>{{ c.score }}</td>
+        <td *ngIf="user?.isAdmin">
+          <div class="actions">
+            <button (click)="startEdit(c)">Editar</button>
+            <button class="danger" (click)="deleteCoffee(c)">Borrar</button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="coffees.length === 0">
+        <td [attr.colspan]="user?.isAdmin ? 6 : 5" style="text-align:center;color:#888;padding:1rem;">
+          No hay cafes para mostrar
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Controles de paginacion -->
+  <div *ngIf="totalPages > 1" style="display:flex;justify-content:center;gap:0.3rem;margin-top:1rem;align-items:center;">
+    <button class="secondary" (click)="prevPage()" [disabled]="currentPage === 0">&laquo; Anterior</button>
+
+    <button *ngFor="let p of pageNumbers()"
+            [class.secondary]="p !== currentPage"
+            (click)="goToPage(p)">
+      {{ p + 1 }}
+    </button>
+
+    <button class="secondary" (click)="nextPage()" [disabled]="currentPage === totalPages - 1">Siguiente &raquo;</button>
+  </div>
+
+  <!-- Resumen -->
+  <p *ngIf="totalElements > 0" style="text-align:center;color:#888;margin-top:0.5rem;font-size:0.9rem;">
+    Mostrando pagina {{ currentPage + 1 }} de {{ totalPages }} ({{ totalElements }} cafes en total)
+  </p>
+
+</div>

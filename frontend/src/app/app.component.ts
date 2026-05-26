@@ -53,7 +53,7 @@ export class AppComponent implements OnInit {
 
   // Estado de paginacion
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalPages = 0;
   totalElements = 0;
 

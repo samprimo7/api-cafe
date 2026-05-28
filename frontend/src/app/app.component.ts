@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Lang, TranslationKey, translate } from './translations';
 
 // Modelos
 interface User {
@@ -64,6 +65,9 @@ export class AppComponent implements OnInit {
   // Toast (notificacion flotante temporal)
   toast: { message: string; type: 'success' | 'error' } | null = null;
 
+  // Cafe pendiente de confirmacion para borrar (null => modal cerrado)
+  coffeeToDelete: Coffee | null = null;
+
   ngOnInit(): void {
     this.loadUser();
     this.loadCoffees();
@@ -102,9 +106,54 @@ export class AppComponent implements OnInit {
   nextPage(): void { this.goToPage(this.currentPage + 1); }
   prevPage(): void { this.goToPage(this.currentPage - 1); }
 
-  /** Array de paginas a mostrar como botones numericos (0, 1, 2, ...). */
-  pageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i);
+  /**
+   * Devuelve los items a pintar en la barra de paginacion.
+   * Numeros = botones de pagina. La cadena '...' = puntos suspensivos.
+   *
+   * Si hay 7 paginas o menos -> muestra todas.
+   * Si hay mas -> muestra primera, ultima, current +/- 1, y "..." en los huecos.
+   *
+   * Ejemplos (15 paginas):
+   *   current = 0  -> [0, 1, 2, 3, ..., 14]
+   *   current = 7  -> [0, ..., 6, 7, 8, ..., 14]
+   *   current = 14 -> [0, ..., 11, 12, 13, 14]
+   */
+  pageNumbers(): (number | '...')[] {
+    const total = this.totalPages;
+    const current = this.currentPage;
+
+    // Pocas paginas -> mostramos todas, sin elipsis
+    if (total <= 7) {
+      return Array.from({ length: total }, (_, i) => i);
+    }
+
+    const result: (number | '...')[] = [];
+
+    // Ventana de paginas alrededor de la actual
+    let start = Math.max(1, current - 1);
+    let end = Math.min(total - 2, current + 1);
+
+    // Si estamos cerca del principio, ensanchamos a la derecha
+    if (current <= 2) end = 3;
+    // Si estamos cerca del final, ensanchamos a la izquierda
+    if (current >= total - 3) start = total - 4;
+
+    // Primera pagina siempre
+    result.push(0);
+
+    // "..." si hay hueco entre la primera y la ventana
+    if (start > 1) result.push('...');
+
+    // Las paginas intermedias
+    for (let i = start; i <= end; i++) result.push(i);
+
+    // "..." si hay hueco entre la ventana y la ultima
+    if (end < total - 2) result.push('...');
+
+    // Ultima pagina siempre
+    result.push(total - 1);
+
+    return result;
   }
 
   /** Reinicia paginacion cuando cambia la busqueda. */
@@ -170,16 +219,32 @@ export class AppComponent implements OnInit {
     }
   }
 
+  /** Abre el modal de confirmacion para borrar. */
   deleteCoffee(coffee: Coffee): void {
-    if (!confirm(`Borrar el cafe de ${coffee.country} (${coffee.variety || 'sin variedad'})?`)) return;
+    this.coffeeToDelete = coffee;
+  }
 
-    this.http.delete(`/coffees/${coffee.id}`, { withCredentials: true }).subscribe({
+  /** Confirma el borrado: ejecuta el DELETE contra la API. */
+  confirmDelete(): void {
+    if (!this.coffeeToDelete) return;
+    const id = this.coffeeToDelete.id;
+
+    this.http.delete(`/coffees/${id}`, { withCredentials: true }).subscribe({
       next: () => {
         this.showToast('Cafe borrado correctamente');
+        this.coffeeToDelete = null;
         this.loadCoffees();
       },
-      error: (e) => this.showToast('Error al borrar: ' + (e.error?.message || e.status), 'error')
+      error: (e) => {
+        this.showToast('Error al borrar: ' + (e.error?.message || e.status), 'error');
+        this.coffeeToDelete = null;
+      }
     });
+  }
+
+  /** Cierra el modal sin borrar nada. */
+  cancelDelete(): void {
+    this.coffeeToDelete = null;
   }
 
   /**
@@ -195,6 +260,7 @@ export class AppComponent implements OnInit {
   private emptyForm(): Partial<Coffee> {
     return {
       country: '',
+      region: '',
       variety: '',
       processingMethod: '',
       score: 85

@@ -34,6 +34,7 @@
     </h3>
     <div class="form-grid">
       <input type="text" [(ngModel)]="formCoffee.country" placeholder="Pais">
+      <input type="text" [(ngModel)]="formCoffee.region" placeholder="Region (ej: guji-hambela)">
       <input type="text" [(ngModel)]="formCoffee.variety" placeholder="Variedad">
       <input type="text" [(ngModel)]="formCoffee.processingMethod" placeholder="Procesado (ej: Washed / Wet)">
       <input type="number" [(ngModel)]="formCoffee.score" placeholder="Score (0-100)">
@@ -89,16 +90,19 @@
   </div>
 
   <!-- Controles de paginacion -->
-  <div *ngIf="totalPages > 1" style="display:flex;justify-content:center;gap:0.3rem;margin-top:1rem;align-items:center;">
+  <div *ngIf="totalPages > 1" class="pagination">
     <button class="secondary" (click)="prevPage()" [disabled]="currentPage === 0" title="Pagina anterior">
       <i class="fa-solid fa-chevron-left"></i>
     </button>
 
-    <button *ngFor="let p of pageNumbers()"
-            [class.secondary]="p !== currentPage"
-            (click)="goToPage(p)">
-      {{ p + 1 }}
-    </button>
+    <ng-container *ngFor="let p of pageNumbers(); let i = index">
+      <span *ngIf="p === '...'" class="page-ellipsis">…</span>
+      <button *ngIf="p !== '...'"
+              [class.secondary]="p !== currentPage"
+              (click)="goToPage($any(p))">
+        {{ $any(p) + 1 }}
+      </button>
+    </ng-container>
 
     <button class="secondary" (click)="nextPage()" [disabled]="currentPage === totalPages - 1" title="Pagina siguiente">
       <i class="fa-solid fa-chevron-right"></i>
@@ -115,4 +119,28 @@
 <!-- Toast: notificacion flotante temporal -->
 <div *ngIf="toast" class="toast" [class.error]="toast.type === 'error'">
   {{ toast.message }}
+</div>
+
+<!-- Modal de confirmacion de borrado -->
+<div *ngIf="coffeeToDelete" class="modal-overlay" (click)="cancelDelete()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-icon">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+    <h3 class="modal-title">Borrar cafe</h3>
+    <p class="modal-message">
+      Vas a borrar el cafe de <strong>{{ coffeeToDelete.country }}</strong>
+      <span *ngIf="coffeeToDelete.variety"> ({{ coffeeToDelete.variety }})</span>.
+      <br>
+      Esta accion no se puede deshacer.
+    </p>
+    <div class="modal-actions">
+      <button class="secondary" (click)="cancelDelete()">
+        <i class="fa-solid fa-xmark"></i> Cancelar
+      </button>
+      <button class="danger" (click)="confirmDelete()">
+        <i class="fa-solid fa-trash"></i> Borrar
+      </button>
+    </div>
+  </div>
 </div>

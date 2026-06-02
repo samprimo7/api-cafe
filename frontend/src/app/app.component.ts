@@ -58,6 +58,13 @@ export class AppComponent implements OnInit {
   totalPages = 0;
   totalElements = 0;
 
+  // Ordenacion
+  sortField = '';
+  sortDir: 'asc' | 'desc' = 'asc';
+
+  // Fila expandida (null = ninguna)
+  expandedId: number | null = null;
+
   // Formulario: si editingCoffee tiene valor, es edicion; si es null, es creacion
   editingCoffee: Coffee | null = null;
   formCoffee: Partial<Coffee> = this.emptyForm();
@@ -117,6 +124,8 @@ export class AppComponent implements OnInit {
     if (this.searchCountry) params.set('country', this.searchCountry);
     params.set('page', String(this.currentPage));
     params.set('size', String(this.pageSize));
+
+    if (this.sortField) params.set('sort', `${this.sortField},${this.sortDir}`);
 
     this.http.get<CoffeePage>(`/coffees/search?${params.toString()}`, { withCredentials: true }).subscribe({
       next: (page) => {
@@ -192,6 +201,21 @@ export class AppComponent implements OnInit {
   doSearch(): void {
     this.currentPage = 0;
     this.loadCoffees();
+  }
+
+  sortBy(field: string): void {
+    if (this.sortField === field) {
+      this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortField = field;
+      this.sortDir = 'asc';
+    }
+    this.currentPage = 0;
+    this.loadCoffees();
+  }
+
+  toggleExpand(id: number): void {
+    this.expandedId = this.expandedId === id ? null : id;
   }
 
   // --- Login / Logout ---

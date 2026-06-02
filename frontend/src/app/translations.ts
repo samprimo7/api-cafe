@@ -54,6 +54,17 @@ const messages = {
     deleteMessage: 'Vas a borrar el café de',
     deleteWarning: 'Esta acción no se puede deshacer.',
 
+    // Detalle expandible
+    detailSpecies: 'Especie',
+    detailHarvestYear: 'Año de cosecha',
+    detailAltitude: 'Altitud (m)',
+    detailAroma: 'Aroma',
+    detailFlavor: 'Sabor',
+    detailAftertaste: 'Postgusto',
+    detailAcidity: 'Acidez',
+    detailBody: 'Cuerpo',
+    detailBalance: 'Balance',
+
     // Métodos de procesado
     proc_washed: 'Lavado / Húmedo',
     proc_natural: 'Natural / Seco',
@@ -115,6 +126,17 @@ const messages = {
     deleteTitle: 'Delete coffee',
     deleteMessage: 'You are about to delete the coffee from',
     deleteWarning: 'This action cannot be undone.',
+
+    // Expandable detail
+    detailSpecies: 'Species',
+    detailHarvestYear: 'Harvest year',
+    detailAltitude: 'Altitude (m)',
+    detailAroma: 'Aroma',
+    detailFlavor: 'Flavor',
+    detailAftertaste: 'Aftertaste',
+    detailAcidity: 'Acidity',
+    detailBody: 'Body',
+    detailBalance: 'Balance',
 
     // Processing methods
     proc_washed: 'Washed / Wet',

@@ -58,32 +58,67 @@
   <table>
     <thead>
       <tr>
-        <th>{{ t('thCountry') }}</th>
-        <th>{{ t('thRegion') }}</th>
-        <th>{{ t('thVariety') }}</th>
-        <th>{{ t('thProcessing') }}</th>
-        <th>{{ t('thScore') }}</th>
+        <th class="th-sort" (click)="sortBy('country')">
+          {{ t('thCountry') }}
+          <i class="fa-solid" [class.fa-sort]="sortField !== 'country'" [class.fa-sort-up]="sortField === 'country' && sortDir === 'asc'" [class.fa-sort-down]="sortField === 'country' && sortDir === 'desc'"></i>
+        </th>
+        <th class="th-sort" (click)="sortBy('region')">
+          {{ t('thRegion') }}
+          <i class="fa-solid" [class.fa-sort]="sortField !== 'region'" [class.fa-sort-up]="sortField === 'region' && sortDir === 'asc'" [class.fa-sort-down]="sortField === 'region' && sortDir === 'desc'"></i>
+        </th>
+        <th class="th-sort" (click)="sortBy('variety')">
+          {{ t('thVariety') }}
+          <i class="fa-solid" [class.fa-sort]="sortField !== 'variety'" [class.fa-sort-up]="sortField === 'variety' && sortDir === 'asc'" [class.fa-sort-down]="sortField === 'variety' && sortDir === 'desc'"></i>
+        </th>
+        <th class="th-sort" (click)="sortBy('processingMethod')">
+          {{ t('thProcessing') }}
+          <i class="fa-solid" [class.fa-sort]="sortField !== 'processingMethod'" [class.fa-sort-up]="sortField === 'processingMethod' && sortDir === 'asc'" [class.fa-sort-down]="sortField === 'processingMethod' && sortDir === 'desc'"></i>
+        </th>
+        <th class="th-sort" (click)="sortBy('totalCupPoints')">
+          {{ t('thScore') }}
+          <i class="fa-solid" [class.fa-sort]="sortField !== 'totalCupPoints'" [class.fa-sort-up]="sortField === 'totalCupPoints' && sortDir === 'asc'" [class.fa-sort-down]="sortField === 'totalCupPoints' && sortDir === 'desc'"></i>
+        </th>
         <th *ngIf="user?.isAdmin">{{ t('thActions') }}</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let c of coffees">
-        <td>{{ c.country }}</td>
-        <td>{{ c.region }}</td>
-        <td>{{ c.variety }}</td>
-        <td>{{ translateProcessing(c.processingMethod) }}</td>
-        <td>{{ c.score }}</td>
-        <td *ngIf="user?.isAdmin">
-          <div class="actions">
-            <button (click)="startEdit(c)" [title]="t('btnEdit')">
-              <i class="fa-solid fa-pen-to-square"></i>
-            </button>
-            <button class="danger" (click)="deleteCoffee(c)" [title]="t('btnDelete')">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
+      <ng-container *ngFor="let c of coffees">
+        <tr class="tr-clickable" (click)="toggleExpand(c.id)">
+          <td>
+            <i class="fa-solid expand-icon" [class.fa-chevron-right]="expandedId !== c.id" [class.fa-chevron-down]="expandedId === c.id"></i>
+            {{ c.country }}
+          </td>
+          <td>{{ c.region }}</td>
+          <td>{{ c.variety }}</td>
+          <td>{{ translateProcessing(c.processingMethod) }}</td>
+          <td>{{ c.score }}</td>
+          <td *ngIf="user?.isAdmin" (click)="$event.stopPropagation()">
+            <div class="actions">
+              <button (click)="startEdit(c)" [title]="t('btnEdit')">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button class="danger" (click)="deleteCoffee(c)" [title]="t('btnDelete')">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="expandedId === c.id" class="tr-detail">
+          <td [attr.colspan]="user?.isAdmin ? 6 : 5">
+            <div class="detail-grid">
+              <div><span class="detail-label">{{ t('detailSpecies') }}</span> {{ c.species }}</div>
+              <div><span class="detail-label">{{ t('detailHarvestYear') }}</span> {{ c.harvestYear }}</div>
+              <div><span class="detail-label">{{ t('detailAltitude') }}</span> {{ c.altitudeMeanMeters }}</div>
+              <div><span class="detail-label">{{ t('detailAroma') }}</span> {{ c.aroma }}</div>
+              <div><span class="detail-label">{{ t('detailFlavor') }}</span> {{ c.flavor }}</div>
+              <div><span class="detail-label">{{ t('detailAftertaste') }}</span> {{ c.aftertaste }}</div>
+              <div><span class="detail-label">{{ t('detailAcidity') }}</span> {{ c.acidity }}</div>
+              <div><span class="detail-label">{{ t('detailBody') }}</span> {{ c.body }}</div>
+              <div><span class="detail-label">{{ t('detailBalance') }}</span> {{ c.balance }}</div>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
       <tr *ngIf="coffees.length === 0">
         <td [attr.colspan]="user?.isAdmin ? 6 : 5" style="text-align:center;color:#888;padding:1rem;">
           {{ t('emptyTable') }}

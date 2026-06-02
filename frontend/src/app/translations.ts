@@ -54,6 +54,12 @@ const messages = {
     deleteMessage: 'Vas a borrar el café de',
     deleteWarning: 'Esta acción no se puede deshacer.',
 
+    // Métodos de procesado
+    proc_washed: 'Lavado / Húmedo',
+    proc_natural: 'Natural / Seco',
+    proc_pulped: 'Natural Despulpado',
+    proc_honey: 'Miel',
+
     // Toasts
     countryRequired: 'El país es obligatorio',
     coffeeCreated: 'Café creado correctamente',
@@ -109,6 +115,12 @@ const messages = {
     deleteTitle: 'Delete coffee',
     deleteMessage: 'You are about to delete the coffee from',
     deleteWarning: 'This action cannot be undone.',
+
+    // Processing methods
+    proc_washed: 'Washed / Wet',
+    proc_natural: 'Natural / Dry',
+    proc_pulped: 'Pulped Natural',
+    proc_honey: 'Honey',
 
     // Toasts
     countryRequired: 'Country is required',

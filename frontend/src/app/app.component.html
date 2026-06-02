@@ -1,17 +1,21 @@
 <header>
   <h1>☕ Coffee API</h1>
 
-  <button *ngIf="!user" (click)="login()" title="Iniciar sesion con GitHub">
-    <i class="fa-brands fa-github"></i> Login
+  <button class="secondary" (click)="toggleLanguage()" [title]="t('languageTooltip')">
+    {{ currentLang === 'es' ? '🇪🇸' : '🇬🇧' }}
+  </button>
+
+  <button *ngIf="!user" (click)="login()" [title]="t('loginTooltip')">
+    <i class="fa-brands fa-github"></i> {{ t('login') }}
   </button>
 
   <div *ngIf="user" class="user-info">
     <img [src]="user.avatarUrl" [alt]="user.login">
     <span>{{ user.name || user.login }}</span>
     <span class="badge" [class.admin]="user.isAdmin">
-      {{ user.isAdmin ? 'ADMIN' : 'USER' }}
+      {{ user.isAdmin ? t('roleAdmin') : t('roleUser') }}
     </span>
-    <button class="secondary" (click)="logout()" title="Cerrar sesion">
+    <button class="secondary" (click)="logout()" [title]="t('logoutTooltip')">
       <i class="fa-solid fa-right-from-bracket"></i>
     </button>
   </div>
@@ -21,8 +25,8 @@
 
   <!-- Buscador -->
   <div class="form-row">
-    <input type="text" [(ngModel)]="searchCountry" placeholder="Buscar por pais (ej: eth)" (keyup.enter)="doSearch()">
-    <button (click)="doSearch()" title="Buscar">
+    <input type="text" [(ngModel)]="searchCountry" [placeholder]="t('searchPlaceholder')" (keyup.enter)="doSearch()">
+    <button (click)="doSearch()" [title]="t('searchTooltip')">
       <i class="fa-solid fa-magnifying-glass"></i>
     </button>
   </div>
@@ -30,36 +34,36 @@
   <!-- Formulario de creacion/edicion: solo admin -->
   <div *ngIf="user?.isAdmin" class="form-card">
     <h3 class="form-title">
-      {{ editingCoffee ? 'Editar cafe #' + editingCoffee.id : 'Anadir nuevo cafe' }}
+      {{ editingCoffee ? t('formEditTitle', {id: editingCoffee.id}) : t('formAddTitle') }}
     </h3>
     <div class="form-grid">
-      <input type="text" [(ngModel)]="formCoffee.country" placeholder="Pais">
-      <input type="text" [(ngModel)]="formCoffee.region" placeholder="Region (ej: guji-hambela)">
-      <input type="text" [(ngModel)]="formCoffee.variety" placeholder="Variedad">
-      <input type="text" [(ngModel)]="formCoffee.processingMethod" placeholder="Procesado (ej: Washed / Wet)">
-      <input type="number" [(ngModel)]="formCoffee.score" placeholder="Score (0-100)">
+      <input type="text" [(ngModel)]="formCoffee.country" [placeholder]="t('fieldCountry')">
+      <input type="text" [(ngModel)]="formCoffee.region" [placeholder]="t('fieldRegion')">
+      <input type="text" [(ngModel)]="formCoffee.variety" [placeholder]="t('fieldVariety')">
+      <input type="text" [(ngModel)]="formCoffee.processingMethod" [placeholder]="t('fieldProcessing')">
+      <input type="number" [(ngModel)]="formCoffee.score" [placeholder]="t('fieldScore')">
     </div>
     <div class="form-actions">
-      <button *ngIf="editingCoffee" class="secondary" (click)="cancelEdit()" title="Cancelar">
+      <button *ngIf="editingCoffee" class="secondary" (click)="cancelEdit()" [title]="t('btnCancel')">
         <i class="fa-solid fa-xmark"></i>
       </button>
-      <button (click)="saveCoffee()" [title]="editingCoffee ? 'Guardar cambios' : 'Crear cafe'">
+      <button (click)="saveCoffee()" [title]="editingCoffee ? t('btnSave') : t('btnCreate')">
         <i class="fa-solid" [class.fa-check]="editingCoffee" [class.fa-plus]="!editingCoffee"></i>
       </button>
     </div>
   </div>
 
-  <!-- Tabla de cafes (envuelta para scroll horizontal en movil) -->
+  <!-- Tabla original -->
   <div class="table-wrapper">
   <table>
     <thead>
       <tr>
-        <th>Pais</th>
-        <th>Region</th>
-        <th>Variedad</th>
-        <th>Procesado</th>
-        <th>Score</th>
-        <th *ngIf="user?.isAdmin">Acciones</th>
+        <th>{{ t('thCountry') }}</th>
+        <th>{{ t('thRegion') }}</th>
+        <th>{{ t('thVariety') }}</th>
+        <th>{{ t('thProcessing') }}</th>
+        <th>{{ t('thScore') }}</th>
+        <th *ngIf="user?.isAdmin">{{ t('thActions') }}</th>
       </tr>
     </thead>
     <tbody>
@@ -67,14 +71,14 @@
         <td>{{ c.country }}</td>
         <td>{{ c.region }}</td>
         <td>{{ c.variety }}</td>
-        <td>{{ c.processingMethod }}</td>
+        <td>{{ translateProcessing(c.processingMethod) }}</td>
         <td>{{ c.score }}</td>
         <td *ngIf="user?.isAdmin">
           <div class="actions">
-            <button (click)="startEdit(c)" title="Editar">
+            <button (click)="startEdit(c)" [title]="t('btnEdit')">
               <i class="fa-solid fa-pen-to-square"></i>
             </button>
-            <button class="danger" (click)="deleteCoffee(c)" title="Borrar">
+            <button class="danger" (click)="deleteCoffee(c)" [title]="t('btnDelete')">
               <i class="fa-solid fa-trash"></i>
             </button>
           </div>
@@ -82,16 +86,58 @@
       </tr>
       <tr *ngIf="coffees.length === 0">
         <td [attr.colspan]="user?.isAdmin ? 6 : 5" style="text-align:center;color:#888;padding:1rem;">
-          No hay cafes para mostrar
+          {{ t('emptyTable') }}
         </td>
       </tr>
     </tbody>
   </table>
   </div>
 
+  <!-- Tablas agrupadas por método de procesado -->
+  <div *ngIf="coffees.length > 0" class="grouped-section">
+    <div *ngFor="let group of groupedCoffees" class="coffee-group">
+      <h4 class="group-header">
+        <i class="fa-solid fa-circle-dot"></i>
+        {{ translateProcessing(group.method) }}
+        <span class="group-count">({{ group.coffees.length }})</span>
+      </h4>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>{{ t('thCountry') }}</th>
+              <th>{{ t('thRegion') }}</th>
+              <th>{{ t('thVariety') }}</th>
+              <th>{{ t('thScore') }}</th>
+              <th *ngIf="user?.isAdmin">{{ t('thActions') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of group.coffees">
+              <td>{{ c.country }}</td>
+              <td>{{ c.region }}</td>
+              <td>{{ c.variety }}</td>
+              <td>{{ c.score }}</td>
+              <td *ngIf="user?.isAdmin">
+                <div class="actions">
+                  <button (click)="startEdit(c)" [title]="t('btnEdit')">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                  <button class="danger" (click)="deleteCoffee(c)" [title]="t('btnDelete')">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- Controles de paginacion -->
   <div *ngIf="totalPages > 1" class="pagination">
-    <button class="secondary" (click)="prevPage()" [disabled]="currentPage === 0" title="Pagina anterior">
+    <button class="secondary" (click)="prevPage()" [disabled]="currentPage === 0" [title]="t('prevPage')">
       <i class="fa-solid fa-chevron-left"></i>
     </button>
 
@@ -104,14 +150,14 @@
       </button>
     </ng-container>
 
-    <button class="secondary" (click)="nextPage()" [disabled]="currentPage === totalPages - 1" title="Pagina siguiente">
+    <button class="secondary" (click)="nextPage()" [disabled]="currentPage === totalPages - 1" [title]="t('nextPage')">
       <i class="fa-solid fa-chevron-right"></i>
     </button>
   </div>
 
   <!-- Resumen -->
   <p *ngIf="totalElements > 0" style="text-align:center;color:#888;margin-top:0.5rem;font-size:0.9rem;">
-    Mostrando pagina {{ currentPage + 1 }} de {{ totalPages }} ({{ totalElements }} cafes en total)
+    {{ t('pageStatus', {current: currentPage + 1, total: totalPages, totalElements: totalElements}) }}
   </p>
 
 </div>
@@ -127,19 +173,19 @@
     <div class="modal-icon">
       <i class="fa-solid fa-triangle-exclamation"></i>
     </div>
-    <h3 class="modal-title">Borrar cafe</h3>
+    <h3 class="modal-title">{{ t('deleteTitle') }}</h3>
     <p class="modal-message">
-      Vas a borrar el cafe de <strong>{{ coffeeToDelete.country }}</strong>
+      {{ t('deleteMessage') }} <strong>{{ coffeeToDelete.country }}</strong>
       <span *ngIf="coffeeToDelete.variety"> ({{ coffeeToDelete.variety }})</span>.
       <br>
-      Esta accion no se puede deshacer.
+      {{ t('deleteWarning') }}
     </p>
     <div class="modal-actions">
       <button class="secondary" (click)="cancelDelete()">
-        <i class="fa-solid fa-xmark"></i> Cancelar
+        <i class="fa-solid fa-xmark"></i> {{ t('btnCancel') }}
       </button>
       <button class="danger" (click)="confirmDelete()">
-        <i class="fa-solid fa-trash"></i> Borrar
+        <i class="fa-solid fa-trash"></i> {{ t('btnDelete') }}
       </button>
     </div>
   </div>

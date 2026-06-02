@@ -352,6 +352,41 @@ button i {
 }
 
 /* ============================================
+   TABLAS AGRUPADAS POR PROCESO
+   ============================================ */
+
+.grouped-section {
+  margin-top: 2rem;
+  border-top: 2px solid #e0d0c5;
+  padding-top: 1.5rem;
+}
+
+.coffee-group {
+  margin-bottom: 1.5rem;
+}
+
+.group-header {
+  margin: 0 0 0.5rem 0;
+  color: #5a3f2c;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.group-header i {
+  color: #6f4e37;
+  font-size: 0.75rem;
+}
+
+.group-count {
+  color: #999;
+  font-weight: normal;
+  font-size: 0.85rem;
+}
+
+/* ============================================
    RESPONSIVE
    ============================================ */
 

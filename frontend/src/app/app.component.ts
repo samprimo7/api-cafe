@@ -68,6 +68,38 @@ export class AppComponent implements OnInit {
   // Cafe pendiente de confirmacion para borrar (null => modal cerrado)
   coffeeToDelete: Coffee | null = null;
 
+  // i18n
+  currentLang: Lang = (localStorage.getItem('lang') as Lang) || 'es';
+
+  t(key: string, params?: Record<string, string | number>): string {
+    return translate(this.currentLang, key as TranslationKey, params);
+  }
+
+  toggleLanguage(): void {
+    this.currentLang = this.currentLang === 'es' ? 'en' : 'es';
+    localStorage.setItem('lang', this.currentLang);
+  }
+
+  get groupedCoffees(): { method: string; coffees: Coffee[] }[] {
+    const groups = new Map<string, Coffee[]>();
+    for (const c of this.coffees) {
+      const key = c.processingMethod || '—';
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(c);
+    }
+    return Array.from(groups.entries()).map(([method, coffees]) => ({ method, coffees }));
+  }
+
+  translateProcessing(method: string): string {
+    const map: Record<string, string> = {
+      'Washed / Wet':   this.t('proc_washed'),
+      'Natural / Dry':  this.t('proc_natural'),
+      'Pulped Natural': this.t('proc_pulped'),
+      'Honey':          this.t('proc_honey'),
+    };
+    return map[method] ?? method;
+  }
+
   ngOnInit(): void {
     this.loadUser();
     this.loadCoffees();
@@ -192,7 +224,7 @@ export class AppComponent implements OnInit {
 
   saveCoffee(): void {
     if (!this.formCoffee.country) {
-      this.showToast('El pais es obligatorio', 'error');
+      this.showToast(this.t('countryRequired'), 'error');
       return;
     }
 
@@ -200,21 +232,21 @@ export class AppComponent implements OnInit {
       // Modo edicion: PUT
       this.http.put<Coffee>(`/coffees/${this.editingCoffee.id}`, this.formCoffee, { withCredentials: true }).subscribe({
         next: () => {
-          this.showToast('Cafe actualizado correctamente');
+          this.showToast(this.t('coffeeUpdated'));
           this.cancelEdit();
           this.loadCoffees();
         },
-        error: (e) => this.showToast('Error al actualizar: ' + (e.error?.message || e.status), 'error')
+        error: (e) => this.showToast(this.t('errorUpdate') + ': ' + (e.error?.message || e.status), 'error')
       });
     } else {
       // Modo creacion: POST
       this.http.post<Coffee>('/coffees', this.formCoffee, { withCredentials: true }).subscribe({
         next: () => {
-          this.showToast('Cafe creado correctamente');
+          this.showToast(this.t('coffeeCreated'));
           this.formCoffee = this.emptyForm();
           this.loadCoffees();
         },
-        error: (e) => this.showToast('Error al crear: ' + (e.error?.message || e.status), 'error')
+        error: (e) => this.showToast(this.t('errorCreate') + ': ' + (e.error?.message || e.status), 'error')
       });
     }
   }
@@ -231,12 +263,12 @@ export class AppComponent implements OnInit {
 
     this.http.delete(`/coffees/${id}`, { withCredentials: true }).subscribe({
       next: () => {
-        this.showToast('Cafe borrado correctamente');
+        this.showToast(this.t('coffeeDeleted'));
         this.coffeeToDelete = null;
         this.loadCoffees();
       },
       error: (e) => {
-        this.showToast('Error al borrar: ' + (e.error?.message || e.status), 'error');
+        this.showToast(this.t('errorDelete') + ': ' + (e.error?.message || e.status), 'error');
         this.coffeeToDelete = null;
       }
     });
